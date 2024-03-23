@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { styled } from 'styled-components';
 
@@ -8,11 +8,16 @@ import { Text } from './foundation/components/Text';
 import { ActionLayout } from './foundation/layouts/ActionLayout';
 import { CommonLayout } from './foundation/layouts/CommonLayout';
 import { Color, Space, Typography } from './foundation/styles/variables';
-import { AuthorDetailPage } from './pages/AuthorDetailPage';
-import { BookDetailPage } from './pages/BookDetailPage';
-import { EpisodeDetailPage } from './pages/EpisodeDetailPage';
-import { SearchPage } from './pages/SearchPage';
-import { TopPage } from './pages/TopPage';
+//import { AuthorDetailPage } from './pages/AuthorDetailPage';
+//import { BookDetailPage } from './pages/BookDetailPage';
+//import { EpisodeDetailPage } from './pages/EpisodeDetailPage';
+//import { SearchPage } from './pages/SearchPage';
+//import { TopPage } from './pages/TopPage';
+const AuthorDetailPage = lazy(() => import('./pages/AuthorDetailPage'));
+const BookDetailPage = lazy(() => import('./pages/BookDetailPage'));
+const EpisodeDetailPage = lazy(() => import('./pages/EpisodeDetailPage'));
+const SearchPage = lazy(() => import('./pages/SearchPage'));
+const TopPage = lazy(() => import('./pages/TopPage'));
 
 const _BackToTopButton = styled(Link)`
   display: flex;
@@ -27,7 +32,7 @@ export const Router: React.FC = () => {
   return (
     <Routes>
       <Route element={<CommonLayout />} path={'/'}>
-        <Route element={<TopPage />} path={''} />
+        <Route element={<Suspense fallback={null}><TopPage /></Suspense> } path={''} />
       </Route>
       <Route
         element={
@@ -44,10 +49,10 @@ export const Router: React.FC = () => {
         }
         path={'/'}
       >
-        <Route element={<BookDetailPage />} path={'books/:bookId'} />
-        <Route element={<EpisodeDetailPage />} path={'books/:bookId/episodes/:episodeId'} />
-        <Route element={<AuthorDetailPage />} path={'authors/:authorId'} />
-        <Route element={<SearchPage />} path={'search'} />
+        <Route element={ <Suspense fallback={null}><BookDetailPage /></Suspense>} path={'books/:bookId'} />
+        <Route element={ <Suspense fallback={null}><EpisodeDetailPage /></Suspense>} path={'books/:bookId/episodes/:episodeId'} />
+        <Route element={ <Suspense fallback={null}><AuthorDetailPage /></Suspense>} path={'authors/:authorId'} />
+        <Route element={ <Suspense fallback={null}><SearchPage /></Suspense>} path={'search'} />
       </Route>
     </Routes>
   );
