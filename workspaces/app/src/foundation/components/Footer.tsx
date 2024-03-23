@@ -3,11 +3,11 @@ import React, { useId } from 'react';
 import styled from 'styled-components';
 
 import { DialogContentAtom } from '../atoms/DialogContentAtom';
-//import { COMPANY } from '../constants/Company';
-//import { CONTACT } from '../constants/Contact';
-//import { OVERVIEW } from '../constants/Overview';
-//import { QUESTION } from '../constants/Question';
-//import { TERM } from '../constants/Term';
+import { COMPANY } from '../constants/Company';
+import { CONTACT } from '../constants/Contact';
+import { OVERVIEW } from '../constants/Overview';
+import { QUESTION } from '../constants/Question';
+import { TERM } from '../constants/Term';
 import { Color, Space, Typography } from '../styles/variables';
 
 import { Box } from './Box';
@@ -40,8 +40,8 @@ export const Footer: React.FC = () => {
   const updateDialogContent = useSetAtom(DialogContentAtom);
 
   const handleRequestToTermDialogOpen = async() => {
-    const TERM_MODULE = await import('../constants/Term');
-    const { TERM } = TERM_MODULE;
+    //const TERM_MODULE = await import('../constants/Term');
+    //const { TERM } = TERM_MODULE;
     updateDialogContent(
       <_Content aria-labelledby={termDialogA11yId} role="dialog">
         <Text as="h2" color={Color.MONO_100} id={termDialogA11yId} typography={Typography.NORMAL16}>
@@ -56,8 +56,8 @@ export const Footer: React.FC = () => {
   };
 
   const handleRequestToContactDialogOpen = async () => {
-    const CONTACT_MODULE = await import('../constants/Contact');
-    const { CONTACT } = CONTACT_MODULE;
+    //const CONTACT_MODULE = await import('../constants/Contact');
+    //const { CONTACT } = CONTACT_MODULE;
     updateDialogContent(
       <_Content aria-labelledby={contactDialogA11yId} role="dialog">
         <Text as="h2" color={Color.MONO_100} id={contactDialogA11yId} typography={Typography.NORMAL16}>
@@ -72,8 +72,8 @@ export const Footer: React.FC = () => {
   };
 
   const handleRequestToQuestionDialogOpen = async() => {
-    const QUESTION_MODULE = await import('../constants/Question');
-    const { QUESTION } = QUESTION_MODULE;
+    //const QUESTION_MODULE = await import('../constants/Question');
+    //const { QUESTION } = QUESTION_MODULE;
     updateDialogContent(
       <_Content aria-labelledby={questionDialogA11yId} role="dialog">
         <Text as="h2" color={Color.MONO_100} id={questionDialogA11yId} typography={Typography.NORMAL16}>
@@ -88,8 +88,8 @@ export const Footer: React.FC = () => {
   };
 
   const handleRequestToCompanyDialogOpen = async() => {
-    const COMPANY_MODULE = await import('../constants/Company');
-    const { COMPANY } = COMPANY_MODULE;
+    //const COMPANY_MODULE = await import('../constants/Company');
+    //const { COMPANY } = COMPANY_MODULE;
     updateDialogContent(
       <_Content aria-labelledby={companyDialogA11yId} role="dialog">
         <Text as="h2" color={Color.MONO_100} id={companyDialogA11yId} typography={Typography.NORMAL16}>
@@ -104,8 +104,8 @@ export const Footer: React.FC = () => {
   };
 
   const handleRequestToOverviewDialogOpen = async() => {
-    const OVERVIEW_MODULE = await import('../constants/Overview');
-    const { OVERVIEW } = OVERVIEW_MODULE;
+    //const OVERVIEW_MODULE = await import('../constants/Overview');
+    //const { OVERVIEW } = OVERVIEW_MODULE;
     updateDialogContent(
       <_Content aria-labelledby={overviewDialogA11yId} role="dialog">
         <Text as="h2" color={Color.MONO_100} id={overviewDialogA11yId} typography={Typography.NORMAL16}>
