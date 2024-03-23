@@ -1,4 +1,4 @@
-import { Suspense, useCallback, useEffect, useId, useState } from 'react';
+import { Suspense, useEffect, useId, useState } from 'react';
 
 import { useBookList } from '../../features/book/hooks/useBookList';
 import { Box } from '../../foundation/components/Box';
@@ -16,12 +16,9 @@ const SearchPage: React.FC = () => {
   const [isClient, setIsClient] = useState(false);
   const [keyword, setKeyword] = useState('');
 
-  const onChangedInput = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setKeyword(event.target.value);
-    },
-    [setKeyword],
-  );
+  const onChangedInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(event.target.value);
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -34,7 +31,7 @@ const SearchPage: React.FC = () => {
         <Text color={Color.MONO_100} id={searchResultsA11yId} typography={Typography.NORMAL20} weight="bold">
           検索結果
         </Text>
-        {keyword !== '' && <SearchResult books={books} keyword={keyword} />}
+        {keyword !== '' && <SearchResult books={books || []} keyword={keyword} />}
       </Box>
     </Box>
   );
