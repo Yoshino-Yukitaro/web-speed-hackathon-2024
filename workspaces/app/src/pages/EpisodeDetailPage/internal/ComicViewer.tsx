@@ -25,6 +25,7 @@ const _Wrapper = styled.div<{
   grid-template-columns: 100%;
   grid-template-rows: 100%;
   max-height: ${({ $maxHeight }) => addUnitIfNeeded($maxHeight)};
+  min-height: ${({ $maxHeight }) => addUnitIfNeeded($maxHeight)};
   overflow: hidden;
 `;
 
