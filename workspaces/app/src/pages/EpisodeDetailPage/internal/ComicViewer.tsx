@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { useState } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
@@ -12,7 +11,7 @@ const IMAGE_HEIGHT = 1518;
 const MIN_VIEWER_HEIGHT = 500;
 const MAX_VIEWER_HEIGHT = 650;
 
-const MIN_PAGE_WIDTH = _.floor((MIN_VIEWER_HEIGHT / IMAGE_HEIGHT) * IMAGE_WIDTH);
+const MIN_PAGE_WIDTH = Math.floor((MIN_VIEWER_HEIGHT / IMAGE_HEIGHT) * IMAGE_WIDTH);
 
 const _Container = styled.div`
   position: relative;
@@ -40,6 +39,17 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
 
   const [el, ref] = useState<HTMLDivElement | null>(null);
 
+  const clamp = (number: number, boundOne: number, boundTwo: number) => {
+    if (!boundTwo) {
+      return Math.max(number, boundOne) === boundOne ? number : boundOne;
+    } else if (Math.min(number, boundOne) === number) {
+      return boundOne;
+    } else if (Math.max(number, boundTwo) === number) {
+      return boundTwo;
+    }
+    return number;
+  };
+
   // コンテナの幅
   const cqw = (el?.getBoundingClientRect().width ?? 0) / 100;
 
@@ -50,7 +60,7 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   // 1ページの高さの候補
   const candidatePageHeight = (candidatePageWidth / IMAGE_WIDTH) * IMAGE_HEIGHT;
   // ビュアーの高さ
-  const viewerHeight = _.clamp(candidatePageHeight, MIN_VIEWER_HEIGHT, MAX_VIEWER_HEIGHT);
+  const viewerHeight = clamp(candidatePageHeight, MIN_VIEWER_HEIGHT, MAX_VIEWER_HEIGHT);
 
   return (
     <_Container ref={ref}>
