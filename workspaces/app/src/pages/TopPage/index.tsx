@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import moment from 'moment-timezone';
 import { Suspense, useId } from 'react';
 
@@ -40,9 +39,17 @@ const TopPage: React.FC = () => {
           <Spacer height={Space * 2} />
           <Box maxWidth="100%" overflowX="scroll" overflowY="hidden">
             <Flex align="stretch" direction="row" gap={Space * 2} justify="flex-start">
-              {_.map(featureList, (feature) => (
-                <FeatureCard key={feature.id} book={feature.book} />
-              ))}
+              {
+                (featureList) ? (
+                  featureList.map((feature) => {
+                    return <FeatureCard key={feature.id} book={feature.book} />;
+                  })
+                ) : (
+                  [1, 2, 3].map((index) => {
+                    return <Box key={index} as="div" height="180px" p={12} width="304px"> </Box>
+                  })
+                )
+              }
             </Flex>
           </Box>
         </Box>
@@ -56,9 +63,17 @@ const TopPage: React.FC = () => {
           <Spacer height={Space * 2} />
           <Box maxWidth="100%" overflowX="hidden" overflowY="hidden">
             <Flex align="center" as="ul" direction="column" justify="center">
-              {_.map(rankingList, (ranking) => (
-                <RankingCard key={ranking.id} book={ranking.book} />
-              ))}
+              {
+                (rankingList) ? (
+                  rankingList.map((ranking) => {
+                    return <RankingCard key={ranking.id} book={ranking.book} />;
+                  })
+                ) : (
+                  [1, 2, 3].map((index) => {
+                    return <Box key={index} as="div" height="130px" width="100%"> </Box>
+                  })
+                )
+              }
             </Flex>
           </Box>
         </Box>
@@ -72,9 +87,17 @@ const TopPage: React.FC = () => {
           <Spacer height={Space * 2} />
           <Box maxWidth="100%" overflowX="scroll" overflowY="hidden">
             <Flex align="stretch" gap={Space * 2} justify="flex-start">
-              {_.map(release?.books, (book) => (
-                <BookCard key={book.id} book={book} />
-              ))}
+              {
+                (release?.books) ? (
+                  release.books.map((book) => {
+                    return <BookCard key={book.id} book={book} />;
+                  })
+                ) : (
+                  [1, 2, 3, 4, 5, 6].map((index) => {
+                    return <Box key={index} as="div" height="242px" width="192px"> </Box>
+                  })
+                )
+              }
             </Flex>
           </Box>
         </Box>
