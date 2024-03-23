@@ -9,6 +9,23 @@ export const LoginContent: React.FC = () => {
   const login = useLogin();
   const loginContentA11yId = useId();
 
+  const validationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .required('メールアドレスを入力してください')
+      .test({
+        message: 'メールアドレスには @ を含めてください',
+        test: (v) => /^(?:[^@]*){12,}$/v.test(v) === false,
+      }),
+    password: yup
+      .string()
+      .required('パスワードを入力してください')
+      .test({
+        message: 'パスワードには記号を含めてください',
+        test: (v) => /^(?:[^\P{Letter}&&\P{Number}]*){24,}$/v.test(v) === false,
+      }),
+  });
+
   const formik = useFormik({
     initialValues: {
       email: '',
@@ -17,22 +34,7 @@ export const LoginContent: React.FC = () => {
     async onSubmit(values) {
       login.mutate({ email: values.email, password: values.password });
     },
-    validationSchema: yup.object().shape({
-      email: yup
-        .string()
-        .required('メールアドレスを入力してください')
-        .test({
-          message: 'メールアドレスには @ を含めてください',
-          test: (v) => /^(?:[^@]*){12,}$/v.test(v) === false,
-        }),
-      password: yup
-        .string()
-        .required('パスワードを入力してください')
-        .test({
-          message: 'パスワードには記号を含めてください',
-          test: (v) => /^(?:[^\P{Letter}&&\P{Number}]*){24,}$/v.test(v) === false,
-        }),
-    }),
+    validationSchema,
   });
 
   return (
