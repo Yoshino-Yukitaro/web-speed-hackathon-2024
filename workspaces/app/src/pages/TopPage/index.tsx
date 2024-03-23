@@ -72,8 +72,8 @@ const TopPage: React.FC = () => {
           <Spacer height={Space * 2} />
           <Box maxWidth="100%" overflowX="scroll" overflowY="hidden">
             <Flex align="stretch" gap={Space * 2} justify="flex-start">
-              {_.map(release.books, (book) => (
-                <BookCard key={book.id} bookId={book.id} />
+              {_.map(release?.books, (book) => (
+                <BookCard key={book.id} book={book} />
               ))}
             </Flex>
           </Box>
