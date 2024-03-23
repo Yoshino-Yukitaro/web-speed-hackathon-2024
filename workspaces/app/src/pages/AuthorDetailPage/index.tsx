@@ -69,17 +69,24 @@ const AuthorDetailPage: React.FC = () => {
         <Spacer height={Space * 2} />
 
         <Flex align="center" as="ul" direction="column" justify="center">
-          {author.books.map((book) => (
-            <BookListItem key={book.id} bookId={book.id} />
-          ))}
-          {author.books.length === 0 && (
-            <>
-              <Spacer height={Space * 2} />
-              <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
-                この作者の作品はありません
-              </Text>
-            </>
-          )}
+          {
+            (!author) ? (
+              [1, 2, 3, 4, 5, 6, 7, 8].map((index) => (
+                <Box key={index} height="111px" width="100%"> </Box>
+              ))
+            ) : (author.books.length === 0) ? (
+              <>
+                <Spacer height={Space * 2} />
+                <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
+                  この作者の作品はありません
+                </Text>
+              </>
+            ) : (
+              author.books.map((book) => (
+                <BookListItem key={book.id} book={book} />
+              ))
+            )
+          }
         </Flex>
       </Box>
     </Box>
