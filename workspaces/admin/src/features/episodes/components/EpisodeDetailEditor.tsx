@@ -96,7 +96,7 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
       description: yup.string().required('あらすじを入力してください'),
       image: yup
         .mixed((image): image is File => image instanceof File)
-        .optional()
+        .required('サムネイルを選択してください')
         .test('is-supported-image', '対応していない画像形式です', async (image) => {
           return image == null || (await isSupportedImage(image));
         }),

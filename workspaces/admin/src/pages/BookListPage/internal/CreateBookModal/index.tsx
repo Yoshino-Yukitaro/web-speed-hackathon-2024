@@ -71,7 +71,7 @@ export const CreateBookModal: React.FC<Props> = ({ isOpen, onClose }) => {
       description: yup.string().required('概要を入力してください'),
       image: yup
         .mixed((image): image is File => image instanceof File)
-        .optional()
+        .required('画像を選択してください')
         .test('is-supported-image', '対応していない画像形式です', async (image) => {
           return image == null || (await isSupportedImage(image));
         }),
