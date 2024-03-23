@@ -54,8 +54,8 @@ const BookDetailPage: React.FC = () => {
 
   const [isFavorite, toggleFavorite] = useAtom(FavoriteBookAtomFamily(bookId));
 
-  const bookImageUrl = useImage({ height: 256, imageId: book.image.id, width: 192 });
-  const auhtorImageUrl = useImage({ height: 32, imageId: book.author.image.id, width: 32 });
+  const bookImageUrl = useImage({ height: 256, imageId: book?.image.id, width: 192 });
+  const auhtorImageUrl = useImage({ height: 32, imageId: book?.author.image.id, width: 32 });
 
   const handleFavClick = useCallback(() => {
     toggleFavorite();
@@ -65,11 +65,11 @@ const BookDetailPage: React.FC = () => {
 
   return (
     <Box height="100%" position="relative" px={Space * 2}>
-      <_HeadingWrapper aria-label="作品情報">
+      <_HeadingWrapper aria-label="作品情報" >
         {bookImageUrl != null && (
           <Image alt={book.name} height={256} objectFit="cover" src={bookImageUrl} width={192} />
         )}
-        <Flex align="flex-start" direction="column" gap={Space * 1} justify="flex-end">
+        <Flex align="flex-start" direction="column" gap={Space * 1} justify="flex-end" >
           <Box>
             <Text color={Color.MONO_100} typography={Typography.NORMAL20} weight="bold">
               {book.name}
@@ -106,17 +106,24 @@ const BookDetailPage: React.FC = () => {
 
       <section aria-label="エピソード一覧">
         <Flex align="center" as="ul" direction="column" justify="center">
-          {episodeList.map((episode) => (
-            <EpisodeListItem key={episode.id} bookId={bookId} episodeId={episode.id} />
-          ))}
-          {episodeList.length === 0 && (
-            <>
-              <Spacer height={Space * 2} />
-              <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
-                この作品はまだエピソードがありません
-              </Text>
-            </>
-          )}
+          {
+            (!episodeList) ? (
+              [1, 2, 3].map((index) => {
+                return <Box key={index} as="div" height="96px" width="100%"> </Box>
+              })
+            ) : (episodeList.length > 0) ? (
+              episodeList.map((episode) => (
+                <EpisodeListItem key={episode.id} bookId={bookId} episode={episode} />
+              ))
+            ) : (
+              <>
+                  <Spacer height={Space * 2} />
+                  <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
+                    この作品はまだエピソードがありません
+                  </Text>
+                </>
+            )
+          }
         </Flex>
       </section>
     </Box>
