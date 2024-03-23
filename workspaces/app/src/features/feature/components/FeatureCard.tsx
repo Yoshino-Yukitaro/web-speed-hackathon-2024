@@ -51,13 +51,13 @@ type Props = {
 const FeatureCard: React.FC<Props> = ({ book }) => {
   const dpr = window.devicePixelRatio;
   const imageUrl = getImageUrl({
-    format: 'jpg',
+    format: 'avif',
     height: 96 * dpr,
     imageId: book.image.id,
     width: 96 * dpr,
   });
   const authorImageUrl = getImageUrl({
-    format: 'jpg',
+    format: 'avif',
     height: 32 * dpr,
     imageId: book.image.id,
     width: 32 * dpr,
