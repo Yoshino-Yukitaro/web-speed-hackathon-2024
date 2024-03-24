@@ -1,22 +1,27 @@
 import { useSetAtom } from 'jotai';
-import React, { Suspense, lazy } from 'react';
+import React, { useId } from 'react';
 import styled from 'styled-components';
 
 import { DialogContentAtom } from '../atoms/DialogContentAtom';
-import { Color, Space } from '../styles/variables';
+import { COMPANY } from '../constants/Company';
+import { CONTACT } from '../constants/Contact';
+import { OVERVIEW } from '../constants/Overview';
+import { QUESTION } from '../constants/Question';
+import { TERM } from '../constants/Term';
+import { Color, Space, Typography } from '../styles/variables';
 
 import { Box } from './Box';
 import { Button } from './Button';
 import { Flex } from './Flex';
-
-const TermDialog = lazy(() => import('./TermDialog'));
-const ContactDialog = lazy(() => import('./ContactDialog'));
-const QuestionDialog = lazy(() => import('./QuestionDialog'));
-const CompanyDialog = lazy(() => import('./CompanyDialog'));
-const OverviewDialog = lazy(() => import('./OverviewDialog'));
+import { Spacer } from './Spacer';
+import { Text } from './Text';
 
 const _Button = styled(Button)`
   color: ${Color.MONO_A};
+`;
+
+const _Content = styled.section`
+  white-space: pre-line;
 `;
 
 export const Footer: React.FC = () => {
@@ -26,39 +31,75 @@ export const Footer: React.FC = () => {
     setIsClient(true);
   }, []);
 
+  const termDialogA11yId = useId();
+  const contactDialogA11yId = useId();
+  const questionDialogA11yId = useId();
+  const companyDialogA11yId = useId();
+  const overviewDialogA11yId = useId();
+
   const updateDialogContent = useSetAtom(DialogContentAtom);
 
   const handleRequestToTermDialogOpen = async() => {
     //const TERM_MODULE = await import('../constants/Term');
     //const { TERM } = TERM_MODULE;
     updateDialogContent(
-      <Suspense fallback={null}>
-        <TermDialog />
-      </Suspense>,
+      <_Content aria-labelledby={termDialogA11yId} role="dialog">
+        <Text as="h2" color={Color.MONO_100} id={termDialogA11yId} typography={Typography.NORMAL16}>
+          利用規約
+        </Text>
+        <Spacer height={Space * 1} />
+        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+          {TERM}
+        </Text>
+      </_Content>,
     );
   };
 
   const handleRequestToContactDialogOpen = async () => {
+    //const CONTACT_MODULE = await import('../constants/Contact');
+    //const { CONTACT } = CONTACT_MODULE;
     updateDialogContent(
-      <Suspense fallback={null}>
-        <ContactDialog />
-      </Suspense>,
+      <_Content aria-labelledby={contactDialogA11yId} role="dialog">
+        <Text as="h2" color={Color.MONO_100} id={contactDialogA11yId} typography={Typography.NORMAL16}>
+          お問い合わせ
+        </Text>
+        <Spacer height={Space * 1} />
+        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+          {CONTACT}
+        </Text>
+      </_Content>,
     );
   };
 
   const handleRequestToQuestionDialogOpen = async() => {
+    //const QUESTION_MODULE = await import('../constants/Question');
+    //const { QUESTION } = QUESTION_MODULE;
     updateDialogContent(
-      <Suspense fallback={null}>
-        <QuestionDialog />
-      </Suspense>,
+      <_Content aria-labelledby={questionDialogA11yId} role="dialog">
+        <Text as="h2" color={Color.MONO_100} id={questionDialogA11yId} typography={Typography.NORMAL16}>
+          Q&A
+        </Text>
+        <Spacer height={Space * 1} />
+        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+          {QUESTION}
+        </Text>
+      </_Content>,
     );
   };
 
   const handleRequestToCompanyDialogOpen = async() => {
+    //const COMPANY_MODULE = await import('../constants/Company');
+    //const { COMPANY } = COMPANY_MODULE;
     updateDialogContent(
-      <Suspense fallback={null}>
-        <CompanyDialog />
-      </Suspense>,
+      <_Content aria-labelledby={companyDialogA11yId} role="dialog">
+        <Text as="h2" color={Color.MONO_100} id={companyDialogA11yId} typography={Typography.NORMAL16}>
+          運営会社
+        </Text>
+        <Spacer height={Space * 1} />
+        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+          {COMPANY}
+        </Text>
+      </_Content>,
     );
   };
 
@@ -66,9 +107,15 @@ export const Footer: React.FC = () => {
     //const OVERVIEW_MODULE = await import('../constants/Overview');
     //const { OVERVIEW } = OVERVIEW_MODULE;
     updateDialogContent(
-      <Suspense fallback={null}>
-        <OverviewDialog />
-      </Suspense>,
+      <_Content aria-labelledby={overviewDialogA11yId} role="dialog">
+        <Text as="h2" color={Color.MONO_100} id={overviewDialogA11yId} typography={Typography.NORMAL16}>
+          Cyber TOONとは
+        </Text>
+        <Spacer height={Space * 1} />
+        <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
+          {OVERVIEW}
+        </Text>
+      </_Content>,
     );
   };
 
