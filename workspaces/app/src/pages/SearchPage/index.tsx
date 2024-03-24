@@ -9,7 +9,8 @@ import { Input } from './internal/Input';
 import { SearchResult } from './internal/SearchResult';
 
 const SearchPage: React.FC = () => {
-  const { data: books } = useBookList({ query: {} });
+  //const { data: books } = useBookList({ query: {} });
+  const [books, setBooks] = useState([]);
 
   const searchResultsA11yId = useId();
 
@@ -21,7 +22,10 @@ const SearchPage: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('SearchPage useEffect start');
+    setBooks(JSON.parse(document.getElementById('inject-data')!.innerHTML).books);
     setIsClient(true);
+    console.log('SearchPage useEffect end');
   }, []);
 
   return (

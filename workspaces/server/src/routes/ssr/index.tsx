@@ -2,21 +2,35 @@ import fs from 'node:fs/promises';
 
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import jsesc from 'jsesc';
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import { ServerStyleSheet } from 'styled-components';
 
+import { bookApiClient } from '@wsh-2024/app/src/features/book/apiClient/bookApiClient';
+import ErrorBoundary from '@wsh-2024/app/src/foundation/components/ErrorBoundary';
 import { ClientApp } from '@wsh-2024/app/src/index';
 
 import { INDEX_HTML_PATH } from '../../constants/paths';
 
 const app = new Hono();
 
+const createInjectBookListDataStr = async(): Promise<Record<string, unknown>> => {
+  const json: Record<string, unknown> = {};
+  
+  const books = await bookApiClient.fetchList({ query: {} })
+  json['books'] = books;
+
+  return json;
+}
+
 async function createHTML({
   body,
+  injectData,
   styleTags,
 }: {
   body: string;
+  injectData: Record<string, unknown> | undefined;
   styleTags: string;
 }): Promise<string> {
   const htmlContent = await fs.readFile(INDEX_HTML_PATH, 'utf-8');
@@ -24,11 +38,25 @@ async function createHTML({
   const content = htmlContent
     .replaceAll('<div id="root"></div>', `<div id="root">${body}</div>`)
     .replaceAll('<style id="tag"></style>', styleTags)
+    .replaceAll(
+      '<script id="inject-data" type="application/json"></script>',
+      injectData ? `<script id="inject-data" type="application/json">
+      ${jsesc(injectData, {
+        isScriptContext: true,
+        json: true,
+        minimal: true,
+      })}
+    </script>` : '',
+    );
 
   return content;
 }
 
 app.get('*', async (c) => {
+  let injectData = undefined
+  if (c.req.path.startsWith('/search')) {
+    injectData = await createInjectBookListDataStr();
+  }
   const sheet = new ServerStyleSheet();
 
   try {
@@ -37,11 +65,12 @@ app.get('*', async (c) => {
         <StaticRouter location={c.req.path}>
           <ClientApp />
         </StaticRouter>,
-      ),
+      )
+      ,
     );
 
     const styleTags = sheet.getStyleTags();
-    const html = await createHTML({ body, styleTags });
+    const html = await createHTML({ body, injectData, styleTags });
 
     return c.html(html);
   } catch (cause) {
