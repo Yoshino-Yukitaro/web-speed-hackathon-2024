@@ -15,7 +15,7 @@ const main = async () => {
 
   window.onload = () => {
     if (window.location.pathname.startsWith('/admin')) {
-      ReactDOM.createRoot(document.getElementById('root')!).render(<AdminApp />);
+      ReactDOM.hydrateRoot(document.getElementById('root')!, <AdminApp />);
     } else {
       ReactDOM.hydrateRoot(
         document.getElementById('root')!,
