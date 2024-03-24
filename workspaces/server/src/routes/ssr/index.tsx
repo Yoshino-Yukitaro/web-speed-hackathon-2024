@@ -12,6 +12,7 @@ import ErrorBoundary from '@wsh-2024/app/src/foundation/components/ErrorBoundary
 import { ClientApp } from '@wsh-2024/app/src/index';
 
 import { INDEX_HTML_PATH } from '../../constants/paths';
+import { episodeApiClient } from '@wsh-2024/app/src/features/episode/apiClient/episodeApiClient';
 
 const app = new Hono();
 
@@ -22,6 +23,18 @@ const createInjectBookListDataStr = async(): Promise<Record<string, unknown>> =>
   json['books'] = books;
 
   return json;
+}
+
+const createUnjectBookDetailDataStr = async(bookId: string): Promise<Record<string, unknown>> => {
+  const json: Record<string, unknown> = {};
+
+  const book = await bookApiClient.fetch({ params: { bookId }});
+  const episodes = await episodeApiClient.fetchList({ query: { bookId }});
+  json['book'] = book;
+  json['episodeList'] = episodes;
+
+  return json;
+
 }
 
 async function createHTML({
@@ -56,6 +69,10 @@ app.get('*', async (c) => {
   let injectData = undefined
   if (c.req.path.startsWith('/search')) {
     injectData = await createInjectBookListDataStr();
+  }
+  if (c.req.path.startsWith('/books')) {
+    const bookId = c.req.path.split('/')[2]!;
+    injectData = await createUnjectBookDetailDataStr(bookId);
   }
   const sheet = new ServerStyleSheet();
 

@@ -2,6 +2,9 @@ import { useState } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
+import type { GetEpisodeResponse } from '@wsh-2024/schema/src/api/episodes/GetEpisodeResponse';
+
+
 import { ComicViewerCore } from '../../../features/viewer/components/ComicViewerCore';
 import { addUnitIfNeeded } from '../../../lib/css/addUnitIfNeeded';
 
@@ -29,10 +32,10 @@ const _Wrapper = styled.div<{
 `;
 
 type Props = {
-  episodeId: string;
+  episode: GetEpisodeResponse;
 };
 
-export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
+export const ComicViewer: React.FC<Props> = ({ episode }) => {
   // 画面のリサイズに合わせて再描画する
   const rerender = useUpdate();
   useInterval(rerender, 0);
@@ -65,7 +68,7 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   return (
     <_Container ref={ref}>
       <_Wrapper $maxHeight={viewerHeight}>
-        <ComicViewerCore episodeId={episodeId} />
+        <ComicViewerCore episode={episode} />
       </_Wrapper>
     </_Container>
   );
