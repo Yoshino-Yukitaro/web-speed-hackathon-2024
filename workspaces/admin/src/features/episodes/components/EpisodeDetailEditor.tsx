@@ -94,12 +94,18 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
     validationSchema: yup.object().shape({
       chapter: yup.number().required('章を入力してください'),
       description: yup.string().required('あらすじを入力してください'),
-      image: yup
-        .mixed((image): image is File => image instanceof File)
-        .optional()
-        .test('is-supported-image', '対応していない画像形式です', async (image) => {
-          return image == null || (await isSupportedImage(image));
-        }),
+      image: (episode == null) ? 
+      yup
+      .mixed((image): image is File => image instanceof File)
+      .required('サムネイルを選択してください')
+      .test('is-supported-image', '対応していない画像形式です', async (image) => {
+        return image == null || (await isSupportedImage(image));
+      }) : 
+      yup
+      .mixed((image): image is File => image instanceof File)
+      .test('is-supported-image', '対応していない画像形式です', async (image) => {
+        return image == null || (await isSupportedImage(image));
+      }),
       name: yup.string().required('エピソード名を入力してください'),
       nameRuby: yup
         .string()
@@ -179,6 +185,7 @@ export const EpisodeDetailEditor: React.FC<Props> = ({ book, episode }) => {
       episodePageId,
     });
   };
+  // 画像ファイルが初期値として設定されていないため、編集がしたいだけでも画像を選択しないといけないようになっている
 
   return (
     <Stack as="section" pb={16} spacing={6}>

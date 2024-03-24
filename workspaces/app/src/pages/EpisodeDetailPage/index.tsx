@@ -1,11 +1,11 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { RouteParams } from 'regexparam';
 import invariant from 'tiny-invariant';
 
-import { useBook } from '../../features/book/hooks/useBook';
+import type { GetEpisodeListResponse } from '@wsh-2024/schema/src/api/episodes/GetEpisodeListResponse';
+
 import { EpisodeListItem } from '../../features/episode/components/EpisodeListItem';
-import { useEpisode } from '../../features/episode/hooks/useEpisode';
 import { Box } from '../../foundation/components/Box';
 import { Flex } from '../../foundation/components/Flex';
 import { Separator } from '../../foundation/components/Separator';
@@ -13,31 +13,44 @@ import { Space } from '../../foundation/styles/variables';
 
 import { ComicViewer } from './internal/ComicViewer';
 
+
 const EpisodeDetailPage: React.FC = () => {
   const { bookId, episodeId } = useParams<RouteParams<'/books/:bookId/episodes/:episodeId'>>();
+  const [episodeList, setEpisodeList] = useState<GetEpisodeListResponse>([]);
   invariant(bookId);
   invariant(episodeId);
 
-  const { data: book } = useBook({ params: { bookId } });
-  const { data: episode } = useEpisode({ params: { episodeId } });
+  useEffect(() => {
+      setEpisodeList(JSON.parse(document.getElementById('inject-data')!.innerHTML).episodeList);
+  }, [])
 
   return (
-    <Box>
-      <section aria-label="漫画ビューアー">
-        <ComicViewer episodeId={episode.id} />
+    episodeList ? (
+      <Box>
+      <section aria-label="漫画ビューアー" >
+        <ComicViewer episode={episodeList.find((episode) => episode.id === episodeId)!} />
       </section>
 
       <Separator />
 
       <Box aria-label="エピソード一覧" as="section" px={Space * 2}>
         <Flex align="center" as="ul" direction="column" justify="center">
-          {book.episodes.map((episode) => (
-            <EpisodeListItem key={episode.id} bookId={bookId} episodeId={episode.id} />
-          ))}
+          {
+            (episodeList) ? (
+              episodeList.map((episode) => (
+                <EpisodeListItem key={episode.id} bookId={bookId} episode={episode} />
+              ))
+            ) : (
+              [1, 2, 3].map((index) => {
+                return <Box key={index} as="div" height="96px" width="100%"> </Box>
+              })
+            )
+          }
         </Flex>
       </Box>
     </Box>
-  );
+  ) : (<></>)
+    )
 };
 
 const EpisodeDetailPageWithSuspense: React.FC = () => {

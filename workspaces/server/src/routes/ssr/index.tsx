@@ -3,42 +3,38 @@ import fs from 'node:fs/promises';
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import jsesc from 'jsesc';
-import moment from 'moment-timezone';
 import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import { ServerStyleSheet } from 'styled-components';
-import { unstable_serialize } from 'swr';
 
-import { featureApiClient } from '@wsh-2024/app/src/features/feature/apiClient/featureApiClient';
-import { rankingApiClient } from '@wsh-2024/app/src/features/ranking/apiClient/rankingApiClient';
-import { releaseApiClient } from '@wsh-2024/app/src/features/release/apiClient/releaseApiClient';
+import { bookApiClient } from '@wsh-2024/app/src/features/book/apiClient/bookApiClient';
+import ErrorBoundary from '@wsh-2024/app/src/foundation/components/ErrorBoundary';
 import { ClientApp } from '@wsh-2024/app/src/index';
-import { getDayOfWeekStr } from '@wsh-2024/app/src/lib/date/getDayOfWeekStr';
 
 import { INDEX_HTML_PATH } from '../../constants/paths';
+import { episodeApiClient } from '@wsh-2024/app/src/features/episode/apiClient/episodeApiClient';
 
 const app = new Hono();
 
-async function createInjectDataStr(): Promise<Record<string, unknown>> {
+const createInjectBookListDataStr = async(): Promise<Record<string, unknown>> => {
   const json: Record<string, unknown> = {};
-
-  {
-    const dayOfWeek = getDayOfWeekStr(moment());
-    const releases = await releaseApiClient.fetch({ params: { dayOfWeek } });
-    json[unstable_serialize(releaseApiClient.fetch$$key({ params: { dayOfWeek } }))] = releases;
-  }
-
-  {
-    const features = await featureApiClient.fetchList({ query: {} });
-    json[unstable_serialize(featureApiClient.fetchList$$key({ query: {} }))] = features;
-  }
-
-  {
-    const ranking = await rankingApiClient.fetchList({ query: {} });
-    json[unstable_serialize(rankingApiClient.fetchList$$key({ query: {} }))] = ranking;
-  }
+  
+  const books = await bookApiClient.fetchList({ query: {} })
+  json['books'] = books;
 
   return json;
+}
+
+const createUnjectBookDetailDataStr = async(bookId: string): Promise<Record<string, unknown>> => {
+  const json: Record<string, unknown> = {};
+
+  const book = await bookApiClient.fetch({ params: { bookId }});
+  const episodes = await episodeApiClient.fetchList({ query: { bookId }});
+  json['book'] = book;
+  json['episodeList'] = episodes;
+
+  return json;
+
 }
 
 async function createHTML({
@@ -47,7 +43,7 @@ async function createHTML({
   styleTags,
 }: {
   body: string;
-  injectData: Record<string, unknown>;
+  injectData: Record<string, unknown> | undefined;
   styleTags: string;
 }): Promise<string> {
   const htmlContent = await fs.readFile(INDEX_HTML_PATH, 'utf-8');
@@ -57,20 +53,27 @@ async function createHTML({
     .replaceAll('<style id="tag"></style>', styleTags)
     .replaceAll(
       '<script id="inject-data" type="application/json"></script>',
-      `<script id="inject-data" type="application/json">
-        ${jsesc(injectData, {
-          isScriptContext: true,
-          json: true,
-          minimal: true,
-        })}
-      </script>`,
+      injectData ? `<script id="inject-data" type="application/json">
+      ${jsesc(injectData, {
+        isScriptContext: true,
+        json: true,
+        minimal: true,
+      })}
+    </script>` : '',
     );
 
   return content;
 }
 
 app.get('*', async (c) => {
-  const injectData = await createInjectDataStr();
+  let injectData = undefined
+  if (c.req.path.startsWith('/search')) {
+    injectData = await createInjectBookListDataStr();
+  }
+  if (c.req.path.startsWith('/books')) {
+    const bookId = c.req.path.split('/')[2]!;
+    injectData = await createUnjectBookDetailDataStr(bookId);
+  }
   const sheet = new ServerStyleSheet();
 
   try {
@@ -79,7 +82,8 @@ app.get('*', async (c) => {
         <StaticRouter location={c.req.path}>
           <ClientApp />
         </StaticRouter>,
-      ),
+      )
+      ,
     );
 
     const styleTags = sheet.getStyleTags();

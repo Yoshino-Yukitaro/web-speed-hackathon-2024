@@ -6,13 +6,11 @@ const SUPPORTED_MIME_TYPE_LIST = ['image/bmp', 'image/jpeg', 'image/png', 'image
 
 const magika = new Magika();
 
-const initMagikaPromise = magika.load({
-  configURL: '/assets/magika/config.json',
-  modelURL: '/assets/magika/model.json',
-});
-
 export async function isSupportedImage(image: File): Promise<boolean> {
-  await initMagikaPromise;
+  await magika.load({
+    configURL: '/assets/magika/config.json',
+    modelURL: '/assets/magika/model.json',
+  });;
   const prediction = await magika.identifyBytes(new Uint8Array(await image.arrayBuffer()));
 
   if (SUPPORTED_MAGIKA_LABEL_LIST.includes(prediction.label)) {
